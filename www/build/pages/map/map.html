@@ -1,9 +1,13 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Map</ion-title>
-  </ion-navbar>
+   <ion-navbar>
+      <ion-title>Map</ion-title>
+   </ion-navbar>
 </ion-header>
 
 <ion-content class="map">
-  <div #map id="map"></div>
+   <button primary (click)="start()">Start Tracking</button>
+   <button primary (click)="stop()">Stop Tracking</button>
+   <button primary (click)="addMarker()">Add Marker</button>
+
+   <div #map id="map"></div>
 </ion-content>

@@ -5,47 +5,53 @@ import { Observable } from 'rxjs/Observable';
 @Injectable()
 export class LocationTracker {
 
-  constructor() {
-    this.positionObserver = null;
-    this.position = Observable.create(observer => {
-      this.positionObserver = observer;
-    });
-  }
+   public positionObserver: any;
+   public position: any;
+   public watch: any;
+   public backgroundGeolocation: any;
 
-  startTracking() {
-    let options = {
-      frequency: 3000,
-      enableHighAccuracy: true
-    };
+   constructor() {
+      this.positionObserver = null;
+      this.position = Observable.create(observer => {
+         this.positionObserver = observer;
+      });
+      console.log('LocationTracker created');
+   }
 
-    this.watch = Geolocation.watchPosition(options);
+   startTracking() {
+      let options = {
+         frequency: 3000,
+         enableHighAccuracy: true
+      };
 
-    this.watch.subscribe((data) => {
-      this.notifyLocation(data.coords);
-    });
+      this.watch = Geolocation.watchPosition(options);
 
-    let backgroundOptions = {
-      desiredAccuracy: 10,
-      stationaryRadius: 10,
-      distanceFilter: 30
-    };
+      this.watch.subscribe((data) => {
+         this.notifyLocation(data.coords);
+      });
 
-    backgroundGeolocation.configure((location) => {
-      this.notifyLocation(location);
-    }, (err) => {
-      console.log(err);
-    }, backgroundOptions);
+      let backgroundOptions = {
+         desiredAccuracy: 10,
+         stationaryRadius: 10,
+         distanceFilter: 30
+      };
 
-    backgroundGeolocation.start();
-    return this.position;
-  }
+      this.backgroundGeolocation.configure((location) => {
+         this.notifyLocation(location);
+      }, (err) => {
+            console.log(err);
+         }, backgroundOptions);
 
-  stopTracking() {
-    backgroundGeolocation.finish();
-    this.watch.unsubscribe();
-  }
+      this.backgroundGeolocation.start();
+      return this.position;
+   }
 
-  notifyLocation(location) {
-    this.positionObserver.next(location);
-  }
+   stopTracking() {
+      this.backgroundGeolocation.finish();
+      this.watch.unsubscribe();
+   }
+
+   notifyLocation(location) {
+      this.positionObserver.next(location);
+   }
 }

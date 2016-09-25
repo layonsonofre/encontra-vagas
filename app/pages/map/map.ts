@@ -7,117 +7,144 @@ import { LocationTracker } from '../../providers/location-tracker/location-track
 declare var google;
 
 @Component({
-  templateUrl: 'build/pages/map/map.html'
-, providers: [LocationTracker]
+   templateUrl: 'build/pages/map/map.html'
+   , providers: [LocationTracker]
 })
 export class MapPage {
 
-  @ViewChild('map') mapElement: ElementRef;
-  map: any;
-  mapInitialized: boolean = false;
-  apiKey: 'AIzaSyCkEfZWhdZhXmNQevSAK5yubpEOh58RXEs';
+   @ViewChild('map') mapElement: ElementRef;
+   map: any;
+   mapInitialized: boolean = false;
+   apiKey: 'AIzaSyCkEfZWhdZhXmNQevSAK5yubpEOh58RXEs';
 
-  constructor(private navCtrl: NavController, private connectivityService: ConnectivityService, tracker) {
-    this.loadGoogleMaps();
-    this.tracker = tracker;
-  }
+   constructor(private navCtrl: NavController, private connectivityService: ConnectivityService, private tracker: LocationTracker) {
+      this.loadGoogleMaps();
+   }
 
-  loadGoogleMaps() {
-    this.addConnectivityListeners();
-    if (typeof google == 'undefined' || typeof google.maps == 'undefined') {
-      console.log('Google maps javascript needs to be loaded');
-      this.disableMap();
+   loadGoogleMaps() {
+      this.addConnectivityListeners();
+      if (typeof google == 'undefined' || typeof google.maps == 'undefined') {
+         console.log('Google maps javascript needs to be loaded');
+         this.disableMap();
 
-      if (this.connectivityService.isOnline()) {
-        console.log("Online, loading map");
+         console.log('after disable map');
 
-        window['mapInit'] = () => {
-          this.initMap();
-          this.enableMap();
-        }
+         if (this.connectivityService.isOnline()) {
+            console.log("Online, loading map");
 
-        let script = document.createElement('script');
-        script.id = 'googleMaps';
+            window['mapInit'] = () => {
+               this.initMap();
+               this.enableMap();
+            }
 
-        if (this.apiKey) {
-          script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit';
-        } else {
-          script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';
-        }
+            let script = document.createElement('script');
+            script.id = 'googleMaps';
 
-        document.body.appendChild(script);
-      }
-    } else {
-      if (this.connectivityService.isOnline()) {
-        console.log('showing map');
-        this.initMap();
-        this.enableMap();
+            if (this.apiKey) {
+               script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit';
+            } else {
+               script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';
+            }
+
+            document.body.appendChild(script);
+         }
       } else {
-        console.log('disabling map');
-        this.disableMap();
-      }
-    }
-  }
-
-  initMap() {
-    this.mapInitialized = true;
-    Geolocation.getCurrentPosition().then((position) => {
-      let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-      let mapOptions = {
-        center: latLng,
-        zoom: 15,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      }
-      this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-    });
-    this.start();
-  }
-
-  disableMap() {
-    console.log('disable map');
-  }
-
-  enableMap() {
-    console.log('enable map');
-  }
-
-  addConnectivityListeners() {
-    var me = this;
-    var onOnline = () => {
-      setTimeout(() => {
-        if(typeof google == 'undefined' || typeof google.maps == 'undefined') {
-          this.loadGoogleMaps();
-        } else {
-          if(!this.mapInitialized) {
+         if (this.connectivityService.isOnline()) {
+            console.log('showing map');
             this.initMap();
-          }
+            this.enableMap();
+         } else {
+            console.log('disabling map');
+            this.disableMap();
+         }
+      }
+   }
 
-          this.enableMap();
-        }
-      }, 2000);
-    };
+   initMap() {
+      this.mapInitialized = true;
+      this.start();
+      Geolocation.getCurrentPosition().then((position) => {
+         let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+         let mapOptions = {
+            center: latLng,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+         }
+         this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+      });
+   }
 
-    var onOffline = () => {
-      this.disableMap();
-    };
+   disableMap() {
+      console.log('disable map');
+   }
 
-    document.addEventListener('online', onOnline, false);
-    document.addEventListener('offline', onOffline, false);
-  }
+   enableMap() {
+      console.log('enable map');
+   }
 
-  static get parameters() {
-    return [[LocationTracker]];
-  }
+   addConnectivityListeners() {
+      var me = this;
+      var onOnline = () => {
+         setTimeout(() => {
+            if (typeof google == 'undefined' || typeof google.maps == 'undefined') {
+               this.loadGoogleMaps();
+            } else {
+               if (!this.mapInitialized) {
+                  this.initMap();
+               }
 
-  start() {
-    this.tracker.startTracking().subscribe((position) => {
-      console.log(position);
-    })
-  }
+               this.enableMap();
+            }
+         }, 2000);
+      };
 
-  stop() {
-    this.tracker.stopTracking();
-  }
+      var onOffline = () => {
+         this.disableMap();
+      };
+
+      document.addEventListener('online', onOnline, false);
+      document.addEventListener('offline', onOffline, false);
+   }
+
+   static get parameters() {
+      return [[LocationTracker]];
+   }
+
+   start() {
+      this.tracker.startTracking().subscribe((position) => {
+         console.log(position);
+      })
+   }
+
+   stop() {
+      this.tracker.stopTracking();
+   }
+
+   addMarker() {
+
+      let marker = new google.maps.Marker({
+         map: this.map,
+         animation: google.maps.Animation.DROP,
+         position: this.map.getCenter()
+      });
+
+      let content = "<h4>Information!</h4>";
+
+      this.addInfoWindow(marker, content);
+
+   }
+
+   addInfoWindow(marker, content) {
+
+      let infoWindow = new google.maps.InfoWindow({
+         content: content
+      });
+
+      google.maps.event.addListener(marker, 'click', () => {
+         infoWindow.open(this.map, marker);
+      });
+
+   }
 
 
 }

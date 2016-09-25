@@ -7,17 +7,18 @@ declare var Connection;
 @Injectable()
 export class ConnectivityService {
 
-  onDevice: boolean;
+   onDevice: boolean;
 
-  constructor(public platform: Platform) {
-    this.onDevice = this.platform.is('cordova');
-  }
+   constructor(public platform: Platform) {
+      this.onDevice = this.platform.is('cordova');
+      console.log('ConnectivityService created');
+   }
 
-  isOnline(): boolean {
-    if (this.onDevice && Network.connection) {
-      return Network.connection !== Connection.NONE;
-    } else {
-      return navigator.onLine;
-    }
-  }
+   isOnline(): boolean {
+      if (this.onDevice && Network.connection) {
+         return Network.connection !== Connection.NONE;
+      } else {
+         return navigator.onLine;
+      }
+   }
 }
