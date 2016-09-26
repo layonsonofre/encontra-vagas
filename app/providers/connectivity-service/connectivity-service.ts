@@ -11,7 +11,6 @@ export class ConnectivityService {
 
    constructor(public platform: Platform) {
       this.onDevice = this.platform.is('cordova');
-      console.log('ConnectivityService created');
    }
 
    isOnline(): boolean {

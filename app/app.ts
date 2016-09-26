@@ -3,7 +3,6 @@ import { ionicBootstrap, Platform } from 'ionic-angular';
 import { StatusBar } from 'ionic-native';
 import { MapPage } from './pages/map/map';
 import { ConnectivityService } from './providers/connectivity-service/connectivity-service';
-import { LocationTracker } from './providers/location-tracker/location-tracker';
 
 @Component({
    template: '<ion-nav [root]="rootPage"></ion-nav>'
@@ -17,4 +16,4 @@ export class MyApp {
    }
 }
 
-ionicBootstrap(MyApp, [ConnectivityService, LocationTracker]);
+ionicBootstrap(MyApp, [ConnectivityService]);
