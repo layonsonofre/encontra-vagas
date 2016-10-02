@@ -9478,10 +9478,30 @@ body {
   font-size: 1.4rem;
   background-color: #fff; }
 
-.map scroll-content {
-  height: 100%; }
-
-.map #map {
-  width: 75%;
-  height: 100%;
-  margin-left: 25%; }
+.map {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100vw;
+  height: 100vh; }
+  .map scroll-content {
+    height: 100vh; }
+  .map #map {
+    width: 75%;
+    height: 100vh;
+    float: right;
+    box-shadow: -2px 0px 10px #CCC; }
+  .map #info {
+    width: 25%;
+    height: 100vh;
+    float: left; }
+    .map #info logo {
+      display: block;
+      height: 100px;
+      width: 100%;
+      background-color: #7A1FA2;
+      color: #FFF;
+      font-weight: bolder;
+      padding: 5px 5px 5px 5px;
+      margin: 0 !important; }

@@ -2,95 +2,120 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { ConnectivityService } from '../../providers/connectivity-service/connectivity-service';
 import { Geolocation } from 'ionic-native';
+import { VagasService } from '../../providers/vagas-service/vagas-service';
 
-declare var google;
+declare var google, vagaSelecionada;
 
 @Component({
    templateUrl: 'build/pages/map/map.html'
+   , providers: [VagasService]
 })
 export class MapPage {
 
    @ViewChild('map') mapElement: ElementRef;
-   map: any;
-   mapInitialized: boolean = false;
-   apiKey: 'AIzaSyCkEfZWhdZhXmNQevSAK5yubpEOh58RXEs';
 
-   constructor(private navCtrl: NavController, private connectivityService: ConnectivityService) {
+   private map: any;
+   private mapInitialised: boolean = false;
+   private apiKey: string = 'AIzaSyCkEfZWhdZhXmNQevSAK5yubpEOh58RXEs';
+   private markers = [];
+   private vagas: any;
+
+   private myPosition: any;
+   private myMarker = null;
+
+   private directionsService: any;
+   private directionsDisplay: any;
+   stepsTo: any;
+
+   constructor(private nav: NavController, private connectivityService: ConnectivityService, private vagasService: VagasService) {
       this.loadGoogleMaps();
    }
 
    loadGoogleMaps() {
       this.addConnectivityListeners();
-      if (typeof google == 'undefined' || typeof google.maps == 'undefined') {
-         console.log('Google maps javascript needs to be loaded');
+      if (typeof google == "undefined" || typeof google.maps == "undefined") {
+         console.log("Google maps JavaScript needs to be loaded.");
          this.disableMap();
 
          if (this.connectivityService.isOnline()) {
-            console.log("Online, loading map");
+            console.log("online, loading map");
 
             window['mapInit'] = () => {
                this.initMap();
                this.enableMap();
             }
 
-            let script = document.createElement('script');
-            script.id = 'googleMaps';
-
-            if (this.apiKey !== undefined) {
+            let script = document.createElement("script");
+            script.id = "googleMaps";
+            if (this.apiKey) {
                script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit';
             } else {
                script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';
             }
-
             document.body.appendChild(script);
          }
       } else {
          if (this.connectivityService.isOnline()) {
-            console.log('showing map');
+            console.log("showing map");
             this.initMap();
             this.enableMap();
-         } else {
-            console.log('disabling map');
+         }
+         else {
+            console.log("disabling map");
             this.disableMap();
          }
       }
    }
 
    initMap() {
-      this.mapInitialized = true;
-      navigator.geolocation.getCurrentPosition((position) => {
-         console.log(position);
-         let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-         let mapOptions = {
-            center: latLng,
-            zoom: 15,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-         }
-         this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
-      }, (err) => {
-         console.log(err);
-      });
+      this.mapInitialised = true;
+
+      if (navigator.geolocation) {
+         navigator.geolocation.getCurrentPosition((position) => {
+            let latLng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+            let mapOptions = {
+               center: latLng,
+               zoom: 15,
+               mapTypeId: google.maps.MapTypeId.ROADMAP
+            }
+
+            this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+
+            this.directionsService = new google.maps.DirectionsService();
+            this.directionsDisplay = new google.maps.DirectionsRenderer();
+            this.directionsDisplay.setMap(this.map);
+
+            this.whereAmI();
+            this.loadVagas();
+         }, () => {
+            this.handleNavigatorError(true);
+         });
+      } else {
+         this.handleNavigatorError(false);
+      }
    }
 
    disableMap() {
-      console.log('disable map');
+      console.log("disable map");
+      //imagem de fundo
    }
 
    enableMap() {
-      console.log('enable map');
+      console.log("enable map");
+      //imagem de fundo
    }
 
    addConnectivityListeners() {
       var me = this;
+
       var onOnline = () => {
          setTimeout(() => {
-            if (typeof google == 'undefined' || typeof google.maps == 'undefined') {
+            if (typeof google == "undefined" || typeof google.maps == "undefined") {
                this.loadGoogleMaps();
             } else {
-               if (!this.mapInitialized) {
+               if (!this.mapInitialised) {
                   this.initMap();
                }
-
                this.enableMap();
             }
          }, 2000);
@@ -102,29 +127,117 @@ export class MapPage {
 
       document.addEventListener('online', onOnline, false);
       document.addEventListener('offline', onOffline, false);
+
    }
 
-   addMarker() {
-      let marker = new google.maps.Marker({
-         map: this.map,
-         animation: google.maps.Animation.DROP,
-         position: this.map.getCenter()
+   whereAmI() {
+      let id = navigator.geolocation.watchPosition((position) => {
+         this.myPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+         this.addMarker(true, this.myPosition, 0);
+         // this.loadVagas();
+      }, (err) => {
+            console.log('Error watching position: ' + err.code + ' ' + err.message);
+         }, {
+            timeout: 3000,
+            enableHighAccuracy: true,
+            maximumAge: 0
+         });
+   }
+
+   loadVagas() {
+      this.vagasService.load().then(data => {
+         this.vagas = data;
+
+         for (let i = 0; i < this.vagas.length; i++) {
+            let latLng = new google.maps.LatLng(this.vagas[i].latitude, this.vagas[i].longitude);
+            this.addMarker(false, latLng, i * 200);
+         }
       });
-      let content = "<h4>Information!</h4>";
-      this.addInfoWindow(marker, content);
+   }
+
+   clearMarkers() {
+      for (let i = 0; i < this.markers.length; i++) {
+         this.markers[i].setMap(null);
+      }
+      this.markers = [];
+   }
+
+   addMarker(me, location, timeout) {
+      if (me && this.myMarker !== null) {
+         this.myMarker.setMap(null);
+         this.myMarker = null;
+      }
+      window.setTimeout(() => {
+         var marker = null;
+         if (me) {
+            marker = new google.maps.Marker({
+               map: this.map,
+               draggable: false,
+               animation: null,
+               position: location
+            });
+         } else {
+            marker = new google.maps.Marker({
+               map: this.map,
+               draggable: false,
+               animation: google.maps.Animation.DROP,
+               position: location
+            });
+         }
+         google.maps.event.addListener(marker, 'click', () => {
+            if (marker.getAnimation() != null) {
+               marker.setAnimation(null);
+            } else {
+               marker.setAnimation(google.maps.Animation.BOUNCE);
+               this.calculateAndDisplayRoute(marker);
+            }
+         });
+         if (me === false) {
+            this.markers.push(marker);
+         } else {
+            this.myMarker = marker;
+         }
+      }, timeout);
+   }
+
+   handleNavigatorError(browserHasGeolocation) {
+      console.log(browserHasGeolocation ?
+         'Error: The Geolocation service failed.' :
+         'Error: Your browser doesn\'t support geolocation.');
+   }
+
+   calculateAndDisplayRoute(marker) {
+      if (this.mapInitialised && marker.getPosition() !== this.myMarker.getPosition()) {
+         this.directionsService.route({
+            origin: this.myPosition,
+            destination: marker.getPosition(),
+            travelMode: 'DRIVING',
+            drivingOptions: {
+               departureTime: new Date(),
+               trafficModel: 'pessimistic'
+            },
+            unitSystem: google.maps.UnitSystem.METRIC
+         }, (response, status) => {
+            if (status === 'OK') {
+               this.directionsDisplay.setDirections(response);
+               this.stepsTo = response.routes[0].legs[0];
+               for (let i = 0; i < this.stepsTo.steps.length; i++) {
+                   console.log(this.stepsTo.steps[i].instructions);
+               }
+            } else {
+               window.alert('Directions request failed due to ' + status);
+            }
+         });
+      }
    }
 
    addInfoWindow(marker, content) {
-
       let infoWindow = new google.maps.InfoWindow({
          content: content
       });
-
       google.maps.event.addListener(marker, 'click', () => {
          infoWindow.open(this.map, marker);
       });
-
    }
-
 
 }

@@ -20,10 +20,12 @@
 // Both iOS and MD colors can be further customized if colors
 // are different per mode.
 $colors: (
-  primary:    #387ef5,
-  secondary:  #32db64,
-  danger:     #f53d3d,
-  light:      #f4f4f4,
-  dark:       #222,
-  favorite:   #69BB7B
+   dark:           #7B1FA2 //0
+   primary:        #9C27B0 //1
+   light:          #E1BEE7 //2
+   text:           #FFFFFF //3
+   accent:         #CDDC39 //4
+   primary-text:   #212121 //5
+   secondary-text: #757575 //6
+   divider:        #BDBDBD //7
 );
