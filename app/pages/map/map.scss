@@ -1,9 +1,19 @@
-@import "../../theme/app.variables";
+$secondary:      #CDDC39;
+$dark:           #7B1FA2;
+$primary:        #9C27B0;
+$light:          #E1BEE7;
+$text:           #FFFFFF;
+$accent:         #CDDC39;
+$primary-text:   #212121;
+$secondary-text: #757575;
+$divider:        #BDBDBD;
+$danger:         #f53d3d;
+$favorite:       #CDDC39;
 
 .map {
    display: flex;
    width: 100vw;
-   height: 100vh;
+   // height: 100vh;
 
    scroll-content {
       height: 100vh;
@@ -13,24 +23,109 @@
       width: 75%;
       height: 100vh;
       float: right;
-      box-shadow: -2px 0px 10px nth($colors, secondary-text);
+      box-shadow: -2px 0px 10px $secondary-text;
    }
 
    #info {
       width: 25%;
-      height: 100vh;
+      height: 90vh;
       float: left;
 
       logo {
          display: block;
-         clear: both;
-         height: 100px;
+         min-height: 10vh;
          width: 100%;
-         background-color: nth($colors, dark);
-         color: nth($colors, text);
-         font-weight: lighter;
+         background-color: $dark;
          padding: 5px 5px 5px 5px;
-         margin: 0 !important;
+         margin: 0 auto !important;
+         clear: both !important;
+
+         h1 {
+            color: $text;
+            font-weight: 100;
+            font-size: 175%;
+         }
+      }
+
+      #instructions {
+         overflow-y: scroll;
+         max-height: 70vh;
+         min-height: 70vh;
+         margin: 10px 10px 10px 10px;
+
+         .geral {
+            display: block;
+            width: 100%;
+
+            h1.valor {
+               font-weight: 100;
+               font-size: 175%;
+               color: $accent;
+            }
+
+            p.label {
+               font-weight: bold;
+               font-size: 90%;
+               color: $secondary-text;
+            }
+         }
+
+         h1.instrucoes {
+            font-weight: 100;
+            font-size: 90%;
+            color: $secondary-text;
+         }
+
+         .direction {
+            margin-bottom: 20px;
+            display: block;
+
+            .icone {
+               width: 20%;
+            }
+
+            .instrucao {
+               width: 100%;
+               color: $primary-text;
+               display: block;
+               font-size: 110%;
+               font-weight: 100;
+            }
+
+            .info-instrucao {
+               margin: 0 auto;
+               display: flex;
+               color: $secondary-text;
+
+               .distancia {
+                  // font-weight: bold;
+                  float: left;
+                  margin-left: 10px;
+                  text-align: left;
+               }
+               .tempo {
+                  // font-weight: bold;
+                  margin-left: 10px;
+                  margin-right: 10px;
+                  text-align: left;
+               }
+
+            }
+         }
+      }
+
+      .footer {
+         position: absolute;
+         bottom: 0;
+         height: 10vh;
+         background-color: $text;
+         width: 24%;
+         p {
+            text-align: center;
+            clear: both;
+            font-size: 80%;
+            color: $secondary-text;
+         }
       }
    }
 }

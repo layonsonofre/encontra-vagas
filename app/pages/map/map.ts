@@ -1,14 +1,16 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, Button, List, Item } from 'ionic-angular';
 import { ConnectivityService } from '../../providers/connectivity-service/connectivity-service';
 import { Geolocation } from 'ionic-native';
 import { VagasService } from '../../providers/vagas-service/vagas-service';
+// import { Button, List, Item } from 'ionic/ionic';
 
 declare var google, vagaSelecionada;
 
 @Component({
    templateUrl: 'build/pages/map/map.html'
    , providers: [VagasService]
+   , directives: [Button, List, Item]
 })
 export class MapPage {
 
@@ -25,7 +27,7 @@ export class MapPage {
 
    private directionsService: any;
    private directionsDisplay: any;
-   stepsTo: any;
+   public stepsTo: any = null;
 
    constructor(private nav: NavController, private connectivityService: ConnectivityService, private vagasService: VagasService) {
       this.loadGoogleMaps();
@@ -48,9 +50,9 @@ export class MapPage {
             let script = document.createElement("script");
             script.id = "googleMaps";
             if (this.apiKey) {
-               script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&callback=mapInit';
+               script.src = 'http://maps.google.com/maps/api/js?key=' + this.apiKey + '&language=pt-BR&callback=mapInit';
             } else {
-               script.src = 'http://maps.google.com/maps/api/js?callback=mapInit';
+               script.src = 'http://maps.google.com/maps/api/js?language=pt-BR&callback=mapInit';
             }
             document.body.appendChild(script);
          }
@@ -134,7 +136,6 @@ export class MapPage {
       let id = navigator.geolocation.watchPosition((position) => {
          this.myPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
          this.addMarker(true, this.myPosition, 0);
-         // this.loadVagas();
       }, (err) => {
             console.log('Error watching position: ' + err.code + ' ' + err.message);
          }, {
@@ -145,6 +146,8 @@ export class MapPage {
    }
 
    loadVagas() {
+      this.clearMarkers();
+      console.log('Loading vagas...');
       this.vagasService.load().then(data => {
          this.vagas = data;
 
@@ -187,6 +190,8 @@ export class MapPage {
          google.maps.event.addListener(marker, 'click', () => {
             if (marker.getAnimation() != null) {
                marker.setAnimation(null);
+               this.directionsDisplay.setDirections({ routes: [] });
+               this.stepsTo = null;
             } else {
                marker.setAnimation(google.maps.Animation.BOUNCE);
                this.calculateAndDisplayRoute(marker);
@@ -208,36 +213,31 @@ export class MapPage {
 
    calculateAndDisplayRoute(marker) {
       if (this.mapInitialised && marker.getPosition() !== this.myMarker.getPosition()) {
+         this.directionsDisplay.setDirections({ routes: [] });
+         this.stepsTo = null;
          this.directionsService.route({
             origin: this.myPosition,
             destination: marker.getPosition(),
             travelMode: 'DRIVING',
-            drivingOptions: {
-               departureTime: new Date(),
-               trafficModel: 'pessimistic'
-            },
             unitSystem: google.maps.UnitSystem.METRIC
          }, (response, status) => {
             if (status === 'OK') {
                this.directionsDisplay.setDirections(response);
                this.stepsTo = response.routes[0].legs[0];
-               for (let i = 0; i < this.stepsTo.steps.length; i++) {
-                   console.log(this.stepsTo.steps[i].instructions);
-               }
             } else {
-               window.alert('Directions request failed due to ' + status);
+               console.log('Directions request failed due to ' + status);
             }
          });
       }
    }
 
-   addInfoWindow(marker, content) {
-      let infoWindow = new google.maps.InfoWindow({
-         content: content
-      });
-      google.maps.event.addListener(marker, 'click', () => {
-         infoWindow.open(this.map, marker);
-      });
-   }
+   // addInfoWindow(marker, content) {
+   //    let infoWindow = new google.maps.InfoWindow({
+   //       content: content
+   //    });
+   //    google.maps.event.addListener(marker, 'click', () => {
+   //       infoWindow.open(this.map, marker);
+   //    });
+   // }
 
 }
