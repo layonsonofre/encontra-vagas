@@ -1,13 +1,15 @@
 {
-   "vagas": [
-      {
-         "id": 1,
-         "latitude": -25.0831028,
-         "longitude": -50.1772022
-      }, {
-         "id": 2,
-         "latitude": -25.0923448,
-         "longitude": -50.1647925
-      }
-   ]
+   "vagas": [{
+      "id": 1,
+      "latitude": -25.096140,
+      "longitude": -50.155699
+   }, {
+      "id": 1,
+      "latitude": -25.0831028,
+      "longitude": -50.1772022
+   }, {
+      "id": 2,
+      "latitude": -25.0923448,
+      "longitude": -50.1647925
+   }]
 }

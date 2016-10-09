@@ -3,7 +3,7 @@
       <logo>
          <h1>Encontre sua vaga</h1>
       </logo>
-      <div id="instructions" *ngIf="stepsTo" [class.show]="stepsTo" class="step">
+      <div id="instructions" *ngIf="stepsTo">
             <div class="geral">
                <h1 class="valor">{{stepsTo.distance.text}}</h1>
                <p class="label">Distância</p>
@@ -12,7 +12,6 @@
             </div>
             <h1 class="instrucoes">Como chegar:</h1>
             <div *ngFor="let step of stepsTo.steps" class="direction">
-               <!-- <span class="icone {{step.maneuver}}"></span> -->
                <p class="instrucao" [innerHTML]="step.instructions"></p>
                <div class="info-instrucao">
                   <p class="distancia" [innerHTML]="step.distance.text"></p>
@@ -21,18 +20,27 @@
             </div>
       </div>
       <ion-row>
-         <ion-col>
-            <button ion-button icon-left color="accent" (click)="loadVagas()">
+         <ion-col width-50>
+            <button ion-button icon-left clear small color="accent" (click)="loadVagas()">
                <ion-icon name="ion-refresh"></ion-icon>
                Atualizar vagas
             </button>
          </ion-col>
+         <ion-col width-50>
+            <button ion-button icon-left clear small color="blue" (click)="showTrafficLayer()">
+               <ion-icon name="ion-traffic"></ion-icon>
+               Mostrar Tráfego
+            </button>
+         </ion-col>
       </ion-row>
-      <div class="footer">
+      <footer>
          <p>Alunos: Fernanda e Layon - Orientador: Alceu de Souza Britto Jr.
-            <br>Eng. de Computação - 2016 @ UEPG
+            <br>TCC Eng. de Computação - 2016 @ UEPG
          </p>
-      </div>
+      </footer>
+
+      <a href="#info" class="show showInstructions"><span class="arrow arrow-up"></span></a>
+      <a href="#map" class="show showMap"><span class="arrow arrow-down"></span></a>
    </div>
    <div #map id="map"></div>
 </ion-content>

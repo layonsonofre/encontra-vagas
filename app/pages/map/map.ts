@@ -3,7 +3,6 @@ import { NavController, Button, List, Item } from 'ionic-angular';
 import { ConnectivityService } from '../../providers/connectivity-service/connectivity-service';
 import { Geolocation } from 'ionic-native';
 import { VagasService } from '../../providers/vagas-service/vagas-service';
-// import { Button, List, Item } from 'ionic/ionic';
 
 declare var google, vagaSelecionada;
 
@@ -28,6 +27,9 @@ export class MapPage {
    private directionsService: any;
    private directionsDisplay: any;
    public stepsTo: any = null;
+
+   public trafficLayer: any;
+   private trafficLayerOn: boolean = false;
 
    constructor(private nav: NavController, private connectivityService: ConnectivityService, private vagasService: VagasService) {
       this.loadGoogleMaps();
@@ -84,14 +86,17 @@ export class MapPage {
             this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
             this.directionsService = new google.maps.DirectionsService();
-            this.directionsDisplay = new google.maps.DirectionsRenderer();
+            this.directionsDisplay = new google.maps.DirectionsRenderer({ supressMarkers: true });
             this.directionsDisplay.setMap(this.map);
 
             this.whereAmI();
             this.loadVagas();
+
+            this.trafficLayer = new google.maps.TrafficLayer();
+            this.showTrafficLayer();
          }, () => {
-            this.handleNavigatorError(true);
-         });
+               this.handleNavigatorError(true);
+            });
       } else {
          this.handleNavigatorError(false);
       }
@@ -177,14 +182,30 @@ export class MapPage {
                map: this.map,
                draggable: false,
                animation: null,
-               position: location
+               position: location,
+               icon: {
+                  path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
+                  strokeColor: '#E1BEE7',
+                  strokeWeight: 3,
+                  fillColor: '#9C27B0',
+                  fillOpacity: 1,
+                  scale: 0.8
+               }
             });
          } else {
             marker = new google.maps.Marker({
                map: this.map,
                draggable: false,
                animation: google.maps.Animation.DROP,
-               position: location
+               position: location,
+               icon: {
+                  path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
+                  strokeColor: '#F1FC8B',
+                  strokeWeight: 3,
+                  fillColor: '#CDDC39',
+                  fillOpacity: 1,
+                  scale: 0.8
+               }
             });
          }
          google.maps.event.addListener(marker, 'click', () => {
@@ -221,23 +242,26 @@ export class MapPage {
             travelMode: 'DRIVING',
             unitSystem: google.maps.UnitSystem.METRIC
          }, (response, status) => {
-            if (status === 'OK') {
-               this.directionsDisplay.setDirections(response);
-               this.stepsTo = response.routes[0].legs[0];
-            } else {
-               console.log('Directions request failed due to ' + status);
-            }
-         });
+               if (status === 'OK') {
+                  this.directionsDisplay.setDirections(response);
+                  this.directionsDisplay.setOptions({suppressMarkers: true});
+                  this.stepsTo = response.routes[0].legs[0];
+               } else {
+                  console.log('Directions request failed due to ' + status);
+               }
+            });
       }
    }
 
-   // addInfoWindow(marker, content) {
-   //    let infoWindow = new google.maps.InfoWindow({
-   //       content: content
-   //    });
-   //    google.maps.event.addListener(marker, 'click', () => {
-   //       infoWindow.open(this.map, marker);
-   //    });
-   // }
+   showTrafficLayer() {
+      if (this.mapInitialised) {
+         if (!this.trafficLayerOn) {
+            this.trafficLayer.setMap(this.map);
+         } else {
+            this.trafficLayer.setMap(null);
+         }
+         this.trafficLayerOn = !this.trafficLayerOn;
+      }
+   }
 
 }

@@ -58,6 +58,7 @@ var MapPage = (function () {
         this.markers = [];
         this.myMarker = null;
         this.stepsTo = null;
+        this.trafficLayerOn = false;
         this.loadGoogleMaps();
     }
     MapPage.prototype.loadGoogleMaps = function () {
@@ -108,10 +109,12 @@ var MapPage = (function () {
                 };
                 _this.map = new google.maps.Map(_this.mapElement.nativeElement, mapOptions);
                 _this.directionsService = new google.maps.DirectionsService();
-                _this.directionsDisplay = new google.maps.DirectionsRenderer();
+                _this.directionsDisplay = new google.maps.DirectionsRenderer({ supressMarkers: true });
                 _this.directionsDisplay.setMap(_this.map);
                 _this.whereAmI();
                 _this.loadVagas();
+                _this.trafficLayer = new google.maps.TrafficLayer();
+                _this.showTrafficLayer();
             }, function () {
                 _this.handleNavigatorError(true);
             });
@@ -248,6 +251,17 @@ var MapPage = (function () {
                     console.log('Directions request failed due to ' + status);
                 }
             });
+        }
+    };
+    MapPage.prototype.showTrafficLayer = function () {
+        if (this.mapInitialised) {
+            if (!this.trafficLayerOn) {
+                this.trafficLayer.setMap(this.map);
+            }
+            else {
+                this.trafficLayer.setMap(null);
+            }
+            this.trafficLayerOn = !this.trafficLayerOn;
         }
     };
     __decorate([

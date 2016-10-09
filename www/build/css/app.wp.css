@@ -11675,14 +11675,17 @@ body {
   display: flex;
   width: 100vw; }
   .map scroll-content {
-    height: 100vh; }
+    height: 100vh;
+    width: 100vw; }
   .map #map {
-    width: 75%;
+    z-index: 2;
+    width: 65%;
     height: 100vh;
     float: right;
     box-shadow: -2px 0px 10px #757575; }
   .map #info {
-    width: 25%;
+    z-index: 2;
+    width: 35%;
     height: 90vh;
     float: left; }
     .map #info logo {
@@ -11717,40 +11720,123 @@ body {
         font-weight: 100;
         font-size: 90%;
         color: #757575; }
-      .map #info #instructions .direction {
-        margin-bottom: 20px;
-        display: block; }
-        .map #info #instructions .direction .icone {
-          width: 20%; }
-        .map #info #instructions .direction .instrucao {
-          width: 100%;
-          color: #212121;
-          display: block;
-          font-size: 110%;
-          font-weight: 100; }
-        .map #info #instructions .direction .info-instrucao {
-          margin: 0 auto;
-          display: -webkit-box;
-          display: -webkit-flex;
-          display: -ms-flexbox;
-          display: flex;
-          color: #757575; }
-          .map #info #instructions .direction .info-instrucao .distancia {
-            float: left;
-            margin-left: 10px;
-            text-align: left; }
-          .map #info #instructions .direction .info-instrucao .tempo {
-            margin-left: 10px;
-            margin-right: 10px;
-            text-align: left; }
-    .map #info .footer {
+    .map #info .direction {
+      margin-bottom: 20px;
+      display: block; }
+      .map #info .direction .icone {
+        width: 20%; }
+      .map #info .direction .instrucao {
+        width: 100%;
+        color: #212121;
+        display: block;
+        font-size: 110%;
+        font-weight: 100; }
+    .map #info .info-instrucao {
+      margin: 0 auto;
+      display: -webkit-box;
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      color: #757575 !important;
+      border-top: 2px !important; }
+      .map #info .info-instrucao .distancia {
+        float: left;
+        margin-left: 10px;
+        text-align: left; }
+      .map #info .info-instrucao .tempo {
+        margin-left: 10px;
+        margin-right: 10px;
+        text-align: left; }
+    .map #info footer {
+      display: block;
       position: absolute;
       bottom: 0;
       height: 10vh;
       background-color: #FFFFFF;
-      width: 24%; }
-      .map #info .footer p {
+      width: 35%;
+      padding: 5px 5px 5px 5px;
+      margin: 0 auto !important;
+      clear: both !important; }
+      .map #info footer p {
         text-align: center;
         clear: both;
         font-size: 80%;
         color: #757575; }
+  @media all and (max-width: 960px) {
+    .map #info {
+      width: 100%;
+      height: 100vh; }
+      .map #info #instructions {
+        overflow-y: scroll;
+        max-height: 50vh;
+        min-height: 50vh;
+        margin: 10px 10px 10px 10px; }
+        .map #info #instructions .geral {
+          display: block;
+          width: 100%; }
+      .map #info .direction {
+        margin-bottom: 20px;
+        display: block; }
+        .map #info .direction .instrucao {
+          width: 100%; }
+      .map #info .info-instrucao {
+        margin: 0 auto;
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex; }
+        .map #info .info-instrucao .distancia {
+          float: left;
+          margin-left: 10px;
+          text-align: left; }
+        .map #info .info-instrucao .tempo {
+          margin-left: 10px;
+          margin-right: 10px;
+          text-align: left; }
+      .map #info footer {
+        display: block;
+        position: absolute;
+        bottom: 2vh;
+        height: 10vh;
+        background-color: #FFFFFF;
+        width: 100%;
+        padding: 5px 5px 5px 5px;
+        margin: 0 auto !important;
+        clear: both !important; }
+    .map #map {
+      width: 100%;
+      height: 100vh;
+      box-shadow: 0px -2px 10px #757575; }
+    .map a.show {
+      background: none;
+      margin: 0 auto;
+      position: fixed;
+      right: 25px;
+      width: 30px;
+      height: 30px;
+      z-index: 10;
+      display: block;
+      text-decoration: none;
+      color: #FFFFFF;
+      background-color: #CDDC39;
+      border-radius: 100%;
+      box-shadow: 4px 4px 5px #DDD; }
+    .map .arrow {
+      width: 0;
+      height: 0;
+      border-left: 10px solid transparent;
+      border-right: 10px solid transparent;
+      margin: 0 auto;
+      position: relative; }
+    .map a.showMap {
+      bottom: 140px; }
+      .map a.showMap .arrow-down {
+        border-top: 10px solid #FFF;
+        bottom: -20px;
+        left: 5px; }
+    .map a.showInstructions {
+      bottom: 180px; }
+      .map a.showInstructions .arrow-up {
+        border-bottom: 10px solid #FFF;
+        bottom: 10px;
+        left: 5px; } }

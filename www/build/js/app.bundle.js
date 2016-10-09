@@ -58,6 +58,7 @@ var MapPage = (function () {
         this.markers = [];
         this.myMarker = null;
         this.stepsTo = null;
+        this.trafficLayerOn = false;
         this.loadGoogleMaps();
     }
     MapPage.prototype.loadGoogleMaps = function () {
@@ -108,10 +109,12 @@ var MapPage = (function () {
                 };
                 _this.map = new google.maps.Map(_this.mapElement.nativeElement, mapOptions);
                 _this.directionsService = new google.maps.DirectionsService();
-                _this.directionsDisplay = new google.maps.DirectionsRenderer();
+                _this.directionsDisplay = new google.maps.DirectionsRenderer({ supressMarkers: true });
                 _this.directionsDisplay.setMap(_this.map);
                 _this.whereAmI();
                 _this.loadVagas();
+                _this.trafficLayer = new google.maps.TrafficLayer();
+                _this.showTrafficLayer();
             }, function () {
                 _this.handleNavigatorError(true);
             });
@@ -194,7 +197,15 @@ var MapPage = (function () {
                     map: _this.map,
                     draggable: false,
                     animation: null,
-                    position: location
+                    position: location,
+                    icon: {
+                        path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
+                        strokeColor: '#E1BEE7',
+                        strokeWeight: 3,
+                        fillColor: '#9C27B0',
+                        fillOpacity: 1,
+                        scale: 0.8
+                    }
                 });
             }
             else {
@@ -202,7 +213,15 @@ var MapPage = (function () {
                     map: _this.map,
                     draggable: false,
                     animation: google.maps.Animation.DROP,
-                    position: location
+                    position: location,
+                    icon: {
+                        path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
+                        strokeColor: '#F1FC8B',
+                        strokeWeight: 3,
+                        fillColor: '#CDDC39',
+                        fillOpacity: 1,
+                        scale: 0.8
+                    }
                 });
             }
             google.maps.event.addListener(marker, 'click', function () {
@@ -242,12 +261,24 @@ var MapPage = (function () {
             }, function (response, status) {
                 if (status === 'OK') {
                     _this.directionsDisplay.setDirections(response);
+                    _this.directionsDisplay.setOptions({ suppressMarkers: true });
                     _this.stepsTo = response.routes[0].legs[0];
                 }
                 else {
                     console.log('Directions request failed due to ' + status);
                 }
             });
+        }
+    };
+    MapPage.prototype.showTrafficLayer = function () {
+        if (this.mapInitialised) {
+            if (!this.trafficLayerOn) {
+                this.trafficLayer.setMap(this.map);
+            }
+            else {
+                this.trafficLayer.setMap(null);
+            }
+            this.trafficLayerOn = !this.trafficLayerOn;
         }
     };
     __decorate([
@@ -322,7 +353,7 @@ var VagasService = (function () {
     VagasService.prototype.load = function () {
         var _this = this;
         return new Promise(function (resolve) {
-            _this.http.get('http://localhost:3000/vagas')
+            _this.http.get('http://private-c35c7-encontresuavaga.apiary-mock.com/vagas')
                 .map(function (res) { return res.json(); })
                 .subscribe(function (data) {
                 _this.vagas = data;
