@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { NavController, Button, List, Item } from 'ionic-angular';
+import { NavController, Button, List, Item, Badge } from 'ionic-angular';
 import { ConnectivityService } from '../../providers/connectivity-service/connectivity-service';
 import { Geolocation } from 'ionic-native';
 import { VagasService } from '../../providers/vagas-service/vagas-service';
@@ -9,7 +9,7 @@ declare var google, vagaSelecionada;
 @Component({
    templateUrl: 'build/pages/map/map.html'
    , providers: [VagasService]
-   , directives: [Button, List, Item]
+   , directives: [Button, List, Item, Badge]
 })
 export class MapPage {
 
@@ -93,7 +93,6 @@ export class MapPage {
             this.loadVagas();
 
             this.trafficLayer = new google.maps.TrafficLayer();
-            this.showTrafficLayer();
          }, () => {
                this.handleNavigatorError(true);
             });
@@ -140,7 +139,7 @@ export class MapPage {
    whereAmI() {
       let id = navigator.geolocation.watchPosition((position) => {
          this.myPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-         this.addMarker(true, this.myPosition, 0);
+         this.addMarker(true, this.myPosition, 'me', 0);
       }, (err) => {
             console.log('Error watching position: ' + err.code + ' ' + err.message);
          }, {
@@ -158,7 +157,7 @@ export class MapPage {
 
          for (let i = 0; i < this.vagas.length; i++) {
             let latLng = new google.maps.LatLng(this.vagas[i].latitude, this.vagas[i].longitude);
-            this.addMarker(false, latLng, i * 200);
+            this.addMarker(false, latLng, this.vagas[i].tipo, i * 200);
          }
       });
    }
@@ -170,13 +169,14 @@ export class MapPage {
       this.markers = [];
    }
 
-   addMarker(me, location, timeout) {
+   addMarker(me, location, tipo, timeout) {
       if (me && this.myMarker !== null) {
          this.myMarker.setMap(null);
          this.myMarker = null;
       }
       window.setTimeout(() => {
          var marker = null;
+         var iconPath = 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z';
          if (me) {
             marker = new google.maps.Marker({
                map: this.map,
@@ -184,7 +184,7 @@ export class MapPage {
                animation: null,
                position: location,
                icon: {
-                  path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
+                  path: iconPath,
                   strokeColor: '#E1BEE7',
                   strokeWeight: 3,
                   fillColor: '#9C27B0',
@@ -193,20 +193,37 @@ export class MapPage {
                }
             });
          } else {
-            marker = new google.maps.Marker({
-               map: this.map,
-               draggable: false,
-               animation: google.maps.Animation.DROP,
-               position: location,
-               icon: {
-                  path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
-                  strokeColor: '#F1FC8B',
-                  strokeWeight: 3,
-                  fillColor: '#CDDC39',
-                  fillOpacity: 1,
-                  scale: 0.8
-               }
-            });
+            if (tipo === 'normal') {
+               marker = new google.maps.Marker({
+                  map: this.map,
+                  draggable: false,
+                  animation: google.maps.Animation.DROP,
+                  position: location,
+                  icon: {
+                     path: iconPath,
+                     strokeColor: '#F1FC8B',
+                     strokeWeight: 3,
+                     fillColor: '#CDDC39',
+                     fillOpacity: 1,
+                     scale: 0.8
+                  }
+               });
+            } else {
+               marker = new google.maps.Marker({
+                  map: this.map,
+                  draggable: false,
+                  animation: google.maps.Animation.DROP,
+                  position: location,
+                  icon: {
+                     path: iconPath,
+                     strokeColor: '#2196f3',
+                     strokeWeight: 3,
+                     fillColor: '#0367b4',
+                     fillOpacity: 1,
+                     scale: 0.8
+                  }
+               });
+            }
          }
          google.maps.event.addListener(marker, 'click', () => {
             if (marker.getAnimation() != null) {

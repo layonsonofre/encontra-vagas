@@ -10,6 +10,7 @@ $divider:        #BDBDBD;
 $danger:         #f53d3d;
 $favorite:       #CDDC39;
 $blue:           #2196f3;
+$blue-darker:    #0367b4;
 
 .map {
    display: flex;
@@ -35,6 +36,7 @@ $blue:           #2196f3;
       float: left;
 
       logo {
+         text-align: center;
          display: block;
          min-height: 10vh;
          width: 100%;
@@ -115,14 +117,19 @@ $blue:           #2196f3;
          }
       }
 
+      #controle {
+         position: absolute;
+         bottom: 8vh;
+         margin: 0 auto;
+         width: 35%;
+      }
+
       footer {
          display: block;
          position: absolute;
-         bottom: 0;
-         height: 10vh;
-         background-color: $text;
+         bottom: 3vh;
+         height: 5vh;
          width: 35%;
-         padding: 5px 5px 5px 5px;
          margin: 0 auto !important;
          clear: both !important;
 
@@ -135,15 +142,15 @@ $blue:           #2196f3;
       }
    }
 
-   @media all and (max-width: 960px) {
+   @media all and (max-width: 620px) {
       #info {
          width: 100%;
          height: 100vh;
 
          #instructions {
             overflow-y: scroll;
-            max-height: 50vh;
-            min-height: 50vh;
+            max-height: 70vh;
+            min-height: 70vh;
             margin: 10px 10px 10px 10px;
 
             .geral {
@@ -153,7 +160,7 @@ $blue:           #2196f3;
          }
 
          .direction {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             display: block;
 
             .instrucao {
@@ -177,14 +184,19 @@ $blue:           #2196f3;
             }
          }
 
+         #controle {
+            position: absolute;
+            bottom: 8vh;
+            margin: 0 auto;
+            width: 100%;
+         }
+
          footer {
             display: block;
             position: absolute;
-            bottom: 2vh;
-            height: 10vh;
-            background-color: $text;
+            bottom: 3vh;
+            height: 5vh;
             width: 100%;
-            padding: 5px 5px 5px 5px;
             margin: 0 auto !important;
             clear: both !important;
          }
@@ -207,7 +219,7 @@ $blue:           #2196f3;
          display: block;
          text-decoration: none;
          color: #FFFFFF;
-         background-color: $accent;
+         background-color: $primary;
          border-radius: 100%;
          box-shadow: 4px 4px 5px #DDD;
       }
@@ -226,7 +238,7 @@ $blue:           #2196f3;
 
          .arrow-down {
             border-top: 10px solid #FFF;
-            bottom: -20px;
+            bottom: -22px;
             left: 5px;
          }
       }

@@ -19,7 +19,7 @@
                </div>
             </div>
       </div>
-      <ion-row>
+      <ion-row text-center id="controle">
          <ion-col width-50>
             <button ion-button icon-left clear small color="accent" (click)="loadVagas()">
                <ion-icon name="ion-refresh"></ion-icon>
@@ -33,11 +33,12 @@
             </button>
          </ion-col>
       </ion-row>
-      <div class="footer">
-         <p>Alunos: Fernanda e Layon - Orientador: Alceu de Souza Britto Jr.
-            <br>TCC Eng. de Computação - 2016 @ UEPG
-         </p>
-      </div>
+      <footer>
+         <p>TCC Eng. de Computação 2016 @ UEPG</p>
+      </footer>
+
+      <a href="#info" class="show showInstructions"><span class="arrow arrow-up"></span></a>
+      <a href="#map" class="show showMap"><span class="arrow arrow-down"></span></a>
    </div>
    <div #map id="map"></div>
 </ion-content>

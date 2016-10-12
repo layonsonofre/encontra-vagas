@@ -12142,6 +12142,7 @@ body {
     height: 90vh;
     float: left; }
     .map #info logo {
+      text-align: center;
       display: block;
       min-height: 10vh;
       width: 100%;
@@ -12200,14 +12201,17 @@ body {
         margin-left: 10px;
         margin-right: 10px;
         text-align: left; }
+    .map #info #controle {
+      position: absolute;
+      bottom: 8vh;
+      margin: 0 auto;
+      width: 35%; }
     .map #info footer {
       display: block;
       position: absolute;
-      bottom: 0;
-      height: 10vh;
-      background-color: #FFFFFF;
+      bottom: 3vh;
+      height: 5vh;
       width: 35%;
-      padding: 5px 5px 5px 5px;
       margin: 0 auto !important;
       clear: both !important; }
       .map #info footer p {
@@ -12215,20 +12219,20 @@ body {
         clear: both;
         font-size: 80%;
         color: #757575; }
-  @media all and (max-width: 960px) {
+  @media all and (max-width: 620px) {
     .map #info {
       width: 100%;
       height: 100vh; }
       .map #info #instructions {
         overflow-y: scroll;
-        max-height: 50vh;
-        min-height: 50vh;
+        max-height: 70vh;
+        min-height: 70vh;
         margin: 10px 10px 10px 10px; }
         .map #info #instructions .geral {
           display: block;
           width: 100%; }
       .map #info .direction {
-        margin-bottom: 20px;
+        margin-bottom: 10px;
         display: block; }
         .map #info .direction .instrucao {
           width: 100%; }
@@ -12246,14 +12250,17 @@ body {
           margin-left: 10px;
           margin-right: 10px;
           text-align: left; }
+      .map #info #controle {
+        position: absolute;
+        bottom: 8vh;
+        margin: 0 auto;
+        width: 100%; }
       .map #info footer {
         display: block;
         position: absolute;
-        bottom: 2vh;
-        height: 10vh;
-        background-color: #FFFFFF;
+        bottom: 3vh;
+        height: 5vh;
         width: 100%;
-        padding: 5px 5px 5px 5px;
         margin: 0 auto !important;
         clear: both !important; }
     .map #map {
@@ -12271,7 +12278,7 @@ body {
       display: block;
       text-decoration: none;
       color: #FFFFFF;
-      background-color: #CDDC39;
+      background-color: #9C27B0;
       border-radius: 100%;
       box-shadow: 4px 4px 5px #DDD; }
     .map .arrow {
@@ -12285,7 +12292,7 @@ body {
       bottom: 140px; }
       .map a.showMap .arrow-down {
         border-top: 10px solid #FFF;
-        bottom: -20px;
+        bottom: -22px;
         left: 5px; }
     .map a.showInstructions {
       bottom: 180px; }

@@ -114,7 +114,6 @@ var MapPage = (function () {
                 _this.whereAmI();
                 _this.loadVagas();
                 _this.trafficLayer = new google.maps.TrafficLayer();
-                _this.showTrafficLayer();
             }, function () {
                 _this.handleNavigatorError(true);
             });
@@ -157,7 +156,7 @@ var MapPage = (function () {
         var _this = this;
         var id = navigator.geolocation.watchPosition(function (position) {
             _this.myPosition = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            _this.addMarker(true, _this.myPosition, 0);
+            _this.addMarker(true, _this.myPosition, 'me', 0);
         }, function (err) {
             console.log('Error watching position: ' + err.code + ' ' + err.message);
         }, {
@@ -174,7 +173,7 @@ var MapPage = (function () {
             _this.vagas = data;
             for (var i = 0; i < _this.vagas.length; i++) {
                 var latLng = new google.maps.LatLng(_this.vagas[i].latitude, _this.vagas[i].longitude);
-                _this.addMarker(false, latLng, i * 200);
+                _this.addMarker(false, latLng, _this.vagas[i].tipo, i * 200);
             }
         });
     };
@@ -184,7 +183,7 @@ var MapPage = (function () {
         }
         this.markers = [];
     };
-    MapPage.prototype.addMarker = function (me, location, timeout) {
+    MapPage.prototype.addMarker = function (me, location, tipo, timeout) {
         var _this = this;
         if (me && this.myMarker !== null) {
             this.myMarker.setMap(null);
@@ -192,6 +191,7 @@ var MapPage = (function () {
         }
         window.setTimeout(function () {
             var marker = null;
+            var iconPath = 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z';
             if (me) {
                 marker = new google.maps.Marker({
                     map: _this.map,
@@ -199,7 +199,7 @@ var MapPage = (function () {
                     animation: null,
                     position: location,
                     icon: {
-                        path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
+                        path: iconPath,
                         strokeColor: '#E1BEE7',
                         strokeWeight: 3,
                         fillColor: '#9C27B0',
@@ -209,20 +209,38 @@ var MapPage = (function () {
                 });
             }
             else {
-                marker = new google.maps.Marker({
-                    map: _this.map,
-                    draggable: false,
-                    animation: google.maps.Animation.DROP,
-                    position: location,
-                    icon: {
-                        path: 'M 0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4 z',
-                        strokeColor: '#F1FC8B',
-                        strokeWeight: 3,
-                        fillColor: '#CDDC39',
-                        fillOpacity: 1,
-                        scale: 0.8
-                    }
-                });
+                if (tipo === 'normal') {
+                    marker = new google.maps.Marker({
+                        map: _this.map,
+                        draggable: false,
+                        animation: google.maps.Animation.DROP,
+                        position: location,
+                        icon: {
+                            path: iconPath,
+                            strokeColor: '#F1FC8B',
+                            strokeWeight: 3,
+                            fillColor: '#CDDC39',
+                            fillOpacity: 1,
+                            scale: 0.8
+                        }
+                    });
+                }
+                else {
+                    marker = new google.maps.Marker({
+                        map: _this.map,
+                        draggable: false,
+                        animation: google.maps.Animation.DROP,
+                        position: location,
+                        icon: {
+                            path: iconPath,
+                            strokeColor: '#2196f3',
+                            strokeWeight: 3,
+                            fillColor: '#0367b4',
+                            fillOpacity: 1,
+                            scale: 0.8
+                        }
+                    });
+                }
             }
             google.maps.event.addListener(marker, 'click', function () {
                 if (marker.getAnimation() != null) {
@@ -289,7 +307,7 @@ var MapPage = (function () {
         core_1.Component({
             templateUrl: 'build/pages/map/map.html',
             providers: [vagas_service_1.VagasService],
-            directives: [ionic_angular_1.Button, ionic_angular_1.List, ionic_angular_1.Item]
+            directives: [ionic_angular_1.Button, ionic_angular_1.List, ionic_angular_1.Item, ionic_angular_1.Badge]
         }), 
         __metadata('design:paramtypes', [ionic_angular_1.NavController, connectivity_service_1.ConnectivityService, vagas_service_1.VagasService])
     ], MapPage);
