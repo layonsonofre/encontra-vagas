@@ -143,7 +143,7 @@ export class MapPage {
       }, (err) => {
             console.log('Error watching position: ' + err.code + ' ' + err.message);
          }, {
-            timeout: 3000,
+            timeout: 10000,
             enableHighAccuracy: true,
             maximumAge: 0
          });

@@ -160,7 +160,7 @@ var MapPage = (function () {
         }, function (err) {
             console.log('Error watching position: ' + err.code + ' ' + err.message);
         }, {
-            timeout: 3000,
+            timeout: 10000,
             enableHighAccuracy: true,
             maximumAge: 0
         });
@@ -371,7 +371,7 @@ var VagasService = (function () {
     VagasService.prototype.load = function () {
         var _this = this;
         return new Promise(function (resolve) {
-            _this.http.get('http://private-c35c7-encontresuavaga.apiary-mock.com/vagas')
+            _this.http.get('http://ejec.co/layon/vagas/api.php')
                 .map(function (res) { return res.json(); })
                 .subscribe(function (data) {
                 _this.vagas = data;

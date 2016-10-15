@@ -10,7 +10,7 @@ export class VagasService {
 
    load() {
       return new Promise(resolve => {
-         this.http.get('http://private-c35c7-encontresuavaga.apiary-mock.com/vagas')
+         this.http.get('http://ejec.co/layon/vagas/api.php')
             .map(res => res.json())
             .subscribe(data => {
                this.vagas = data;
